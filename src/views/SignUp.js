@@ -3,8 +3,9 @@ import "./SignUp.css";
 import { useState } from "react";
 
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
-const SignUp = () => {
+const SignUp = (props) => {
   const [formData, setFromData] = useState({
     username: "",
     email: "",
@@ -164,14 +165,14 @@ const SignUp = () => {
       .then((req) => {
         let reqData = req.data;
 
-        if(reqData.signedup) {
-            setSignUpMessage('Account created')
+        if (reqData.signedup) {
+          setSignUpMessage("Account created");
         } else {
-            if(reqData.message.username) {
-                setSignUpMessage(reqData.message.username[0])
-            } else if (reqData.message.email) {
-                setSignUpMessage(reqData.message.email[0])
-            }
+          if (reqData.message.username) {
+            setSignUpMessage(reqData.message.username[0]);
+          } else if (reqData.message.email) {
+            setSignUpMessage(reqData.message.email[0]);
+          }
         }
       })
       .catch((error) => {
@@ -181,6 +182,7 @@ const SignUp = () => {
 
   return (
     <div className="signUp">
+      {props.user && <Navigate to="/" />}
       <form onSubmit={handleSubmit}>
         {signUpMessage && <h2>{signUpMessage}</h2>}
         <input

@@ -1,60 +1,64 @@
-import { useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 import axios from "axios";
 
 
 const LoadMore = (props) => {
-  const containerRef = useRef(null)
+  const endOfPageRef = useRef();
+	const [createdRef, setRef] = useState(false);
 
-  const getNextPosts = () => {
-    const headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        'Authorization': 'Bearer ' + (props.user ? props.user.jwt_token : '')
-      };
-  
-      axios
-        .post(
-          "http://akademia108.pl/api/social-app/post/older-then",
-          { 
-            "date": props.posts[props.posts.length - 1].created_at
-          },
-          { headers: headers }
-        )
-        .then((req) => {
-          let reqData = req.data;
-            console.log('next')
-            props.setPosts(props.posts.concat(reqData))
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-}
+	const nextPosts = () => {
+		axios
+			.post(
+				'https://akademia108.pl/api/social-app/post/older-then',
+				{
+					date: `${props.posts[props.posts.length - 1].created_at}`,
+				},
+				props.axiosConfig
+			)
+			.then((req) => {
+				setTimeout(() => {
+					props.setPosts(props.posts.concat(req.data));
+					setRef(false);
+				}, 300);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	};
 
-  const callbackFunction = (entries) => {
-    getNextPosts()
-  }
+	if (props.posts[0]) {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.intersectionRatio > 0) {
+					nextPosts();
+					observer.unobserve(entry.target);
+				}
+			});
+		}, {
+      rootMargin: '0px',
+      threshold: 0.9,
+    });
 
-  useEffect(() => {
-    
-    const observer = new IntersectionObserver(callbackFunction, {
-        root: null,
-        rootMargin: "0px",
-        threshold:1.0
-      })
-    if (containerRef.current) observer.observe(containerRef.current)
-    
-    return () => {
-      if(containerRef.current) observer.unobserve(containerRef.current)
-    }
-  }, [containerRef])
+		if (endOfPageRef.current) {
+			if (!createdRef) {
+				observer.observe(endOfPageRef.current);
+				setRef(true);
+			}
+		}
+	}
 
-
-  return (
-    <div ref={containerRef}>
-        LoadMore
-    </div>
-  )
+	return (
+		<div
+			ref={(node) => {
+				endOfPageRef.current = node;
+			}}
+			style={{ height: '50px' }}
+			className='empty'
+		>
+			Load more
+		</div>
+	);
 }
 
 export default LoadMore;

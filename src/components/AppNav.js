@@ -1,8 +1,11 @@
+import './AppNav.css';
+
 import { Link } from "react-router-dom";
+
 
 const AppNav = () => {
   return (
-    <nav>
+    <nav className="mainNav">
       <ul>
         <li>
           <Link to="/">Home</Link>

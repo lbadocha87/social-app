@@ -5,7 +5,7 @@ import { useState } from "react";
 const Post = (props) => {
   const [likesCount, setLikesCount] = useState(props.post.likes.length);
   const [doesUserLiked, setDoesUserLiked] = useState(
-    props.post.likes.filter((like) => like.username === props.user.username)
+    props.post.likes.filter((like) => like.username === props.user?.username)
       .length !== 0
   );
 
@@ -27,7 +27,7 @@ const Post = (props) => {
       .then((req) => {
         let reqData = req.data;
         console.log(reqData);
-        setLikesCount(likesCount + 1);
+        setLikesCount(likesCount + (isLiked?-1:1));
         setDoesUserLiked(!isLiked);
       })
       .catch((error) => {
@@ -47,11 +47,11 @@ const Post = (props) => {
         </div>
         <div className="postContent">{props.post.content}</div>
         <div className="likes">
-          <button className="btn" onClick={() => likePost(props.post.id, doesUserLiked)}>
+          {props.user && <button className="btn" onClick={() => likePost(props.post.id, doesUserLiked)}>
             {doesUserLiked
               ? "Dislike"
               : "Like"}
-          </button>
+          </button>}
           {likesCount}
         </div>
       </div>

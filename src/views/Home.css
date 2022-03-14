@@ -1,0 +1,38 @@
+.postList {
+    max-width: 600px;
+    margin: auto;
+}
+
+
+.post {
+    display: flex;
+    border: 1px solid black;
+}
+
+.post > * {
+    padding: 5px;
+}
+
+.post .avatar img {
+    height: 50px;
+    border-radius: 50%;
+}
+
+.post .postData {
+    width: 100%;
+}
+
+.post .postData .postMeta {
+    display: flex;
+    padding: 5px;
+    justify-content: space-between;
+}
+
+.post .postData .postMeta .author {
+    font-weight: 700;
+}
+
+.post .postData .postContent {
+    text-align: left;
+    padding: 5px;
+}

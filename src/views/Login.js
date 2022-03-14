@@ -61,6 +61,7 @@ const Login = (props) => {
         console.error(error);
       });
   };
+  
   return (
     <div className="login">
       {props.user && <Navigate to="/" />}

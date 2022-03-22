@@ -9,6 +9,8 @@ function App() {
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
 
+
+
   return (
     <div className="App">
       <AppNav user={user} setUser={setUser} />

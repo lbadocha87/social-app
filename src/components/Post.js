@@ -18,17 +18,61 @@ const Post = (props) => {
 
     axios
       .post(
-        "http://akademia108.pl/api/social-app/post/" + (isLiked?'dislike':'like'),
+        "http://akademia108.pl/api/social-app/post/" +
+          (isLiked ? "dislike" : "like"),
         {
           post_id: id,
         },
         { headers: headers }
       )
       .then((req) => {
-        let reqData = req.data;
-        console.log(reqData);
-        setLikesCount(likesCount + (isLiked?-1:1));
+        setLikesCount(likesCount + (isLiked ? -1 : 1));
         setDoesUserLiked(!isLiked);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const unfollow = (id) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
+    };
+
+    axios
+      .post(
+        "https://akademia108.pl/api/social-app/follows/disfollow",
+        { leader_id: id },
+        { headers: headers }
+      )
+      .then((req) => {
+        props.getLatestPosts();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+
+  const deletePost = (id) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
+    };
+
+    axios
+      .post(
+        "https://akademia108.pl/api/social-app/post/delete",
+        { post_id: id },
+        { headers: headers }
+      )
+      .then((req) => {
+        props.setPosts(posts=>{
+          return posts.filter(post=>post.id !== req.data.post_id)
+        })
       })
       .catch((error) => {
         console.error(error);
@@ -47,11 +91,30 @@ const Post = (props) => {
         </div>
         <div className="postContent">{props.post.content}</div>
         <div className="likes">
-          {props.user && <button className="btn" onClick={() => likePost(props.post.id, doesUserLiked)}>
-            {doesUserLiked
-              ? "Dislike"
-              : "Like"}
-          </button>}
+        {props.post.user.username === props.user.username && (
+            <button
+              className="btn"
+              onClick={() => deletePost(props.post.id)}
+            >
+              Delete post
+            </button>
+          )}
+          {props.user && props.post.user.username !== props.user.username && (
+            <button
+              className="btn"
+              onClick={() => unfollow(props.post.user.id)}
+            >
+              Unfollow
+            </button>
+          )}
+          {props.user && (
+            <button
+              className="btn"
+              onClick={() => likePost(props.post.id, doesUserLiked)}
+            >
+              {doesUserLiked ? "Dislike" : "Like"}
+            </button>
+          )}
           {likesCount}
         </div>
       </div>

@@ -91,7 +91,7 @@ const Post = (props) => {
         </div>
         <div className="postContent">{props.post.content}</div>
         <div className="likes">
-        {props.post.user.username === props.user.username && (
+        {props.post.user.username === props.user?.username && (
             <button
               className="btn"
               onClick={() => deletePost(props.post.id)}
@@ -99,7 +99,7 @@ const Post = (props) => {
               Delete post
             </button>
           )}
-          {props.user && props.post.user.username !== props.user.username && (
+          {props.user && props.post.user.username !== props.user?.username && (
             <button
               className="btn"
               onClick={() => unfollow(props.post.user.id)}

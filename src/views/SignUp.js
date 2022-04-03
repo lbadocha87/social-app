@@ -3,7 +3,7 @@ import "./SignUp.css";
 import { useState } from "react";
 
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 
 const SignUp = (props) => {
   const [formData, setFromData] = useState({
@@ -21,6 +21,7 @@ const SignUp = (props) => {
   });
 
   const [signUpMessage, setSignUpMessage] = useState("");
+  const [signUpDone, setSignUpDone] = useState(false);
 
   const handleInputChange = (e) => {
     const target = e.target;
@@ -100,7 +101,7 @@ const SignUp = (props) => {
         };
       });
     } else if (
-      !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(formData.password.trim())
+      !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(formData.password.trim())
     ) {
       validationErrors.password = true;
       serErrors((prevErrors) => {
@@ -143,7 +144,9 @@ const SignUp = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    if (!validate()) {
+      return;
+    }
 
     let newUser = {
       username: formData.username,
@@ -151,22 +154,17 @@ const SignUp = (props) => {
       password: formData.password,
     };
 
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-
     axios
       .post(
         "http://akademia108.pl/api/social-app/user/signup",
-        JSON.stringify(newUser),
-        { headers: headers }
+        JSON.stringify(newUser)
       )
       .then((req) => {
         let reqData = req.data;
 
         if (reqData.signedup) {
           setSignUpMessage("Account created");
+          setSignUpDone(true);
         } else {
           if (reqData.message.username) {
             setSignUpMessage(reqData.message.username[0]);
@@ -190,6 +188,7 @@ const SignUp = (props) => {
           name="username"
           placeholder="User name"
           onChange={handleInputChange}
+          disabled={signUpDone}
         />
         {errors.username && <p>{errors.username}</p>}
         <input
@@ -197,23 +196,34 @@ const SignUp = (props) => {
           name="email"
           placeholder="Email"
           onChange={handleInputChange}
+          disabled={signUpDone}
         />
         {errors.email && <p>{errors.email}</p>}
         <input
-          type="text"
+          type="password"
           name="password"
           placeholder="Password"
           onChange={handleInputChange}
+          disabled={signUpDone}
         />
         {errors.password && <p>{errors.password}</p>}
         <input
-          type="text"
+          type="password"
           name="repeatPassword"
           placeholder="Repeat password"
           onChange={handleInputChange}
+          disabled={signUpDone}
         />
         {errors.repeatPassword && <p>{errors.repeatPassword}</p>}
-        <button className="btn">Sign Up</button>
+        <button className="btn" disabled={signUpDone}>
+          Sign Up
+        </button>
+
+        {signUpDone && (
+          <div>
+            <Link to="/login" className="btn">Przejdź do logowania</Link>
+          </div>
+        )}
       </form>
     </div>
   );

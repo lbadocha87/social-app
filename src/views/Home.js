@@ -14,17 +14,10 @@ const Home = (props) => {
   const [posts, setPosts] = useState([]);
 
   const getLatestPosts = () => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
-
+    
     axios
       .post(
-        "http://akademia108.pl/api/social-app/post/latest",
-        {},
-        { headers: headers }
+        "http://akademia108.pl/api/social-app/post/latest"
       )
       .then((req) => {
         let reqData = req.data;
@@ -36,19 +29,14 @@ const Home = (props) => {
   };
 
   const getNextPosts = () => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
+
 
     axios
       .post(
         "https://akademia108.pl/api/social-app/post/older-then",
         {
           date: posts[posts.length - 1].created_at,
-        },
-        { headers: headers }
+        }
       )
       .then((req) => {
         let reqData = req.data;
@@ -60,19 +48,13 @@ const Home = (props) => {
   };
 
   const getPrevPosts = () => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
 
     axios
       .post(
         "https://akademia108.pl/api/social-app/post/newer-then",
         {
           date: posts[0].created_at,
-        },
-        { headers: headers }
+        }
       )
       .then((req) => {
         let reqData = req.data;

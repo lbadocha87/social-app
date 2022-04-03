@@ -10,12 +10,8 @@ const AddPost = (props) => {
   const addPost = (e) => {
     e.preventDefault();
  
-    if(!postContent) return;
-
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
+    if(!postContent) {
+      return
     };
 
     axios
@@ -23,8 +19,7 @@ const AddPost = (props) => {
         "https://akademia108.pl/api/social-app/post/add",
         {
           content: postContent,
-        },
-        { headers: headers }
+        }
       )
       .then((req) => {
         let reqData = req.data;
@@ -36,6 +31,7 @@ const AddPost = (props) => {
         console.error(error);
       });
   };
+  
   return (
     <form onSubmit={addPost} className='addPostForm'>
       <textarea placeholder="Add post..." onChange={(e)=>setPostContent(e.target.value)} value={postContent}></textarea>

@@ -31,17 +31,10 @@ const Login = (props) => {
       username: formData.username,
       password: formData.password
     };
-
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-
     axios
       .post(
         "http://akademia108.pl/api/social-app/user/login",
-        JSON.stringify(user),
-        { headers: headers }
+        JSON.stringify(user)
       )
       .then((req) => {
         let reqData = req.data;

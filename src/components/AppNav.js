@@ -9,17 +9,10 @@ const AppNav = (props) => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-      const headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        'Authorization': 'Bearer ' + props.user.jwt_token
-      };
   
       axios
         .post(
-          "http://akademia108.pl/api/social-app/user/logout",
-          {},
-          { headers: headers }
+          "http://akademia108.pl/api/social-app/user/logout"
         )
         .then((req) => {
           let reqData = req.data;

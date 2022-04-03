@@ -1,31 +1,27 @@
 import "./Post.css";
-import axios from "axios";
+
 import { useState } from "react";
+
+import axios from "axios";
 
 const Post = (props) => {
   const [likesCount, setLikesCount] = useState(props.post.likes.length);
+  const [deleteModalDisplay, setDeleteModalDisplay] = useState(false);
   const [doesUserLiked, setDoesUserLiked] = useState(
     props.post.likes.filter((like) => like.username === props.user?.username)
       .length !== 0
   );
 
   const likePost = (id, isLiked) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
-
     axios
       .post(
         "http://akademia108.pl/api/social-app/post/" +
           (isLiked ? "dislike" : "like"),
         {
           post_id: id,
-        },
-        { headers: headers }
+        }
       )
-      .then((req) => {
+      .then(() => {
         setLikesCount(likesCount + (isLiked ? -1 : 1));
         setDoesUserLiked(!isLiked);
       })
@@ -35,19 +31,11 @@ const Post = (props) => {
   };
 
   const unfollow = (id) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
-
     axios
-      .post(
-        "https://akademia108.pl/api/social-app/follows/disfollow",
-        { leader_id: id },
-        { headers: headers }
-      )
-      .then((req) => {
+      .post("https://akademia108.pl/api/social-app/follows/disfollow", {
+        leader_id: id,
+      })
+      .then(() => {
         props.getLatestPosts();
       })
       .catch((error) => {
@@ -55,24 +43,15 @@ const Post = (props) => {
       });
   };
 
-
   const deletePost = (id) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
-
     axios
-      .post(
-        "https://akademia108.pl/api/social-app/post/delete",
-        { post_id: id },
-        { headers: headers }
-      )
+      .post("https://akademia108.pl/api/social-app/post/delete", {
+        post_id: id,
+      })
       .then((req) => {
-        props.setPosts(posts=>{
-          return posts.filter(post=>post.id !== req.data.post_id)
-        })
+        props.setPosts((posts) => {
+          return posts.filter((post) => post.id !== req.data.post_id);
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -91,11 +70,8 @@ const Post = (props) => {
         </div>
         <div className="postContent">{props.post.content}</div>
         <div className="likes">
-        {props.post.user.username === props.user?.username && (
-            <button
-              className="btn"
-              onClick={() => deletePost(props.post.id)}
-            >
+          {props.post.user.username === props.user?.username && (
+            <button className="btn" onClick={() => setDeleteModalDisplay(true)}>
               Delete post
             </button>
           )}
@@ -118,6 +94,15 @@ const Post = (props) => {
           {likesCount}
         </div>
       </div>
+      {deleteModalDisplay && (
+        <div className="deleteConfirmation">
+          <h3>Are you sure you want to delete post?</h3>
+          <button className="btn yes" onClick={() => deletePost(props.post.id)}>
+            Yes
+          </button>{" "}
+          <button className="btn no" onClick={() => setDeleteModalDisplay(false)}>No</button>
+        </div>
+      )}
     </div>
   );
 };

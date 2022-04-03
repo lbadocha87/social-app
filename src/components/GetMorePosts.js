@@ -13,8 +13,7 @@ const LoadMore = (props) => {
 				'https://akademia108.pl/api/social-app/post/older-then',
 				{
 					date: `${props.posts[props.posts.length - 1].created_at}`,
-				},
-				props.axiosConfig
+				}
 			)
 			.then((req) => {
 				setTimeout(() => {

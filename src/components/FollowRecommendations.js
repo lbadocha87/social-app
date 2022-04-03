@@ -8,17 +8,10 @@ const FollowRecommendations = (props) => {
   const [recommendations, setRecommendations] = useState([]);
 
   const getRecommendations = () => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
 
     axios
       .post(
-        "https://akademia108.pl/api/social-app/follows/recommendations",
-        {},
-        { headers: headers }
+        "https://akademia108.pl/api/social-app/follows/recommendations"
       )
       .then((req) => {
         setRecommendations(req.data);
@@ -33,19 +26,12 @@ const FollowRecommendations = (props) => {
   }, [props.posts]);
 
   const follow = (id) => {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + (props.user ? props.user.jwt_token : ""),
-    };
-
     axios
       .post(
         "https://akademia108.pl/api/social-app/follows/follow",
-        { leader_id: id },
-        { headers: headers }
+        { leader_id: id }
       )
-      .then((req) => {
+      .then(() => {
         props.getLatestPosts()
       })
       .catch((error) => {
